@@ -2,19 +2,21 @@ const Discord = require('discord.js')
 const token = ''
 const client = new Discord.Client()
 
+const mtg = require('mtgsdk')
+
 const kick = require('./modules/kick.js')
 const ban = require('./modules/ban.js')
 const unban = require('./modules/unban.js')
 const timedMute = require('./modules/timedMute.js')
 
-client.on('ready', () => {
-    var test = client.channels.cache.get("685609545548169278")
-    test.send("Hello!  I am a bot.")
-})
+// client.on('ready', () => {
+//     var test = client.channels.cache.get("685609545548169278")
+//     test.send("Hello!  I am a bot.")
+// })
 
 client.on('message', async msg => {
     if (msg.content === '!test'){
-        msg.channel.send(`Hello ${msg.author}`)
+        msg.reply(`Hello ${msg.author}`)
     }
 
     if (msg.content === '!francis'){
@@ -22,6 +24,17 @@ client.on('message', async msg => {
     }
 
     if (msg.content != ""){
+        //search for card by name
+        if (msg.content.startsWith('[nameSearch] ')) {
+            let args = msg.content.slice(13)
+
+            mtg.card.where({ name: args })
+            .then(card => {
+                msg.reply(card[0].imageUrl)
+            })
+        }
+
+        //admin Mod commands
         if ((msg.member.roles.cache.has(700816495189426276)) || (msg.member.id === msg.guild.owner.id)){
             let user = msg.mentions.users.first();
             let memb = msg.guild.member(user);
